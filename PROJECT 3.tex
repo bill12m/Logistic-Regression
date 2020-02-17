@@ -1,0 +1,197 @@
+\documentclass[11pt,letterpaper,oneside]{article} 
+\usepackage[margin=1in]{geometry} %easy way to set the page dimensions
+\usepackage{amssymb, enumerate, amsthm, amsmath, graphicx, multirow, xcolor, array} %symbols, graphics, and a better enumerate environment
+\usepackage[pdftex,colorlinks]{hyperref} %this will cause links to be clickable in some PDF viewers
+\usepackage[alphabetic]{amsrefs} %package for the bibliography
+\pagestyle{empty}
+
+%% some handy shortcuts
+%% you can make your own, but this can get out of control if you do to many
+%% and too many can make your code very very hard to read!
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+
+%% determines the numbering behavior of theorems, etc.
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{claim}[theorem]{Claim}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{goal}[theorem]{Goal}
+ \numberwithin{theorem}{section} 
+\newcommand{\define}[1]{\emph{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% your document begins here
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% paper details
+
+\begin{document}
+
+\title{CMPSCI5340: PROJECT 3}
+\author{William Morris}
+\date{10-04-2019}
+\maketitle
+
+\begin{enumerate}
+\item Gradient Descent
+\begin{enumerate} [(a)]
+\item
+\begin{enumerate}
+\item Initial Weights $\overrightarrow{w}_0 = (0,0)$
+\item Learning Rate $\eta = 0.001$
+\item Number of Weight Updates $t = 16,153$
+\item Final Solution $w_0+w_1x = 1.567+0.980x$
+\item At first I thought this was a pretty good model. I saw the changes we got from different choices of initial weights and thought it was pretty stable. However, later on I'll show that I decided Stochastic Gradient Descent was better.
+\end{enumerate}
+\item
+\begin{table}[h]
+\caption{Measuring the Learning Rate $\eta$}
+\begin{center}
+\begin{tabular}{|c|c|}
+\firsthline
+$\eta$&Final Weights\\\hline
+0.005&2.990, 1.227\\\hline
+0.01&3.607, 1.310\\\hline
+0.05&5.057, 1.475\\\hline
+0.1&5.688, 1.539\\\hline
+0.5&7.119, 1.718\\\hline
+1&7.546, 1.984\\\hline
+\end{tabular}
+\end{center}
+\end{table}%
+\item
+\begin{table}[h]
+\caption{Measuring the Initial Weights}
+\begin{center}
+\begin{tabular}{|c|c|}\firsthline
+$\overrightarrow{w}_0$&Final Weights\\\hline
+$(1,1)$&1.456, 1.091\\\hline
+$(0,1)$&1.809, 0.738\\\hline
+$(1,0)$&1.305, 1.242\\\hline
+$(10,10)$&10, 10\\\hline
+$(2,2)$&2, 2\\\hline
+$(2,0)$&2.177, 0.369\\\hline
+$(0,2)$&0.516, 2.031\\\hline
+\end{tabular}
+\end{center}
+\label{default}
+\end{table}%
+\item
+\begin{align*}
+P(y=0|x=3)&=\dfrac{1}{1+e^{1.567+0.980(3)}}\\
+&\approx 0.011\\\\
+P(y=0|x=5)&=\dfrac{1}{1+e^{1.567+0.980(5)}}\\
+&\approx 0.002\\
+\end{align*}
+\item Yes. It can be a classifier
+\begin{center}
+\begin{tabular}[h]{|c|c|}\hline
+$X$&$Y$\\\hline
+1.5&0.9542\\\hline
+2.5&0.9823\\\hline
+3.5&0.9933\\\hline
+4.5&0.9975\\\hline
+5.5&0.9990\\\hline
+6.5&0.9996\\\hline
+7.5&0.9998\\\hline
+\end{tabular}
+\end{center}
+\item You could still use logistic regression. It only provides the \emph{probability} that a value will produce a particular output. So long as $P(Y=0)>0,$ it can certainly occur at the same time that $Y=1,$ even if it's very unlikely.
+\end{enumerate}
+\item Stochastic Gradient Descent
+\begin{enumerate}
+\item
+\begin{enumerate}
+\item Initial Weights $\overrightarrow{w}_0=(0,0)$
+\item Learning Rate $\eta=0.001$
+\item Number of Updates $t=15,899$
+\item Final Solution $w_0+w_1x=1.557+0.977x$
+\item I think it's good quality in that its final solution is close to the Gradient Descent Method. However, when $\eta_{GD}\approx\eta_{SGD}, $ I couldn't reduce the number of weight updates by more than a few 100 iterations. What did drop the number of updates was when $\eta_{SGD}$ was at least 1 order of magnitude greater than $\eta_{GD}.$ I was uncomfortable with this at first; but, as I'm about to show, Stochastic Gradient Descent doesn't change much in proportion to the learning rate.
+\end{enumerate}
+\item
+\begin{table}[h]
+\caption{Measuring the Learning Rate $\eta$}
+\begin{center}
+\begin{tabular}{|c|c|}
+\firsthline
+$\eta$&Final Weights\\\hline
+0.005&1.557, 0.980\\\hline
+0.01&1.557, 0.983\\\hline
+0.05&1.559, 0.917\\\hline
+0.1&1.557, 0.980\\\hline
+0.5&1.560, 1.613\\\hline
+1&1.562, 0.978\\\hline
+\end{tabular}
+\end{center}
+\end{table}%
+\item
+\begin{table}[h]
+\caption{Measuring the Initial Weights}
+\begin{center}
+\begin{tabular}{|c|c|}\firsthline
+$\overrightarrow{w}_0$&Final Weights\\\hline
+$(1,1)$&1.557, 1.107\\\hline
+$(0,1)$&1.557, 1.275\\\hline
+$(1,0)$&1.557, 0.637\\\hline
+$(10,10)$&NA\\\hline
+$(2,2)$&NA\\\hline
+$(2,0)$&NA\\\hline
+$(0,2)$&NA\\\hline
+\end{tabular}
+\end{center}
+\label{default}
+\end{table}%
+Somewhere around $\overrightarrow{w}_0=(1.575,1.575)$ the model performed 0 updates, and any larger values caused it to diverge.
+\item
+\begin{align*}
+P(y=0|x=3)&=\dfrac{1}{1+e^{1.557+0.977(3)}}\\
+&\approx 0.111\\\\
+P(y=0|x=5)&=\dfrac{1}{1+e^{1.557+0.977(5)}}\\
+&\approx 0.002\\
+\end{align*}
+
+\end{enumerate}
+\item Final Thoughts
+
+In general, I think Stochastic Gradient Descent is the better model. Even though you have to be careful of your choice in initial weights, it seems to be a much more stable model than Gradient Descent
+\end{enumerate}
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
